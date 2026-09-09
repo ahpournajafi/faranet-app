@@ -1,0 +1,38 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model Consultation {
+  id        String   @id @default(cuid())
+  name      String
+  phone     String
+  company   String?
+  service   String
+  details   String?
+  createdAt DateTime @default(now())
+  status    String   @default("PENDING") // PENDING, CONTACTED, RESOLVED
+}
+
+model RateLimit {
+  id        String   @id @default(cuid())
+  ip        String
+  action    String
+  count     Int      @default(1)
+  resetAt   DateTime
+  createdAt DateTime @default(now())
+
+  @@unique([ip, action])
+}
+
+model AuditLog {
+  id        String   @id @default(cuid())
+  action    String   // e.g. "LOGIN_SUCCESS", "LOGIN_FAILED"
+  ip        String
+  details   String?
+  createdAt DateTime @default(now())
+}
